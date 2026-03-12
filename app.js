@@ -47,7 +47,7 @@ function escapeHTML(str) {
 
 function loadPosts() {
 
-    fetch("posts.json")
+    fetch("posts.json?v=" + Date.now())
         .then(res => res.json())
         .then(data => {
 
@@ -170,70 +170,47 @@ function sanitizeLink(url){
 
 }
 
-publishBtn.onclick = async function () {
+publishBtn.onclick = async function() {
+    const text = textBox.value.trim();
+    const link = linkBox.value.trim();
+    const user = getUser();
 
-    const text = textBox.value.trim()
+    if (text.length < 5) { alert("Write something"); return; }
 
-    if (text.length < 5) {
-        alert("write something")
-        return
+    publishBtn.disabled = true;
+    publishBtn.textContent = "Publishing...";
+
+    try {
+        const res = await fetch("/.netlify/functions/publish", {
+            method: "POST",
+            body: JSON.stringify({ user, text, link }),
+            headers: { "Content-Type": "application/json" }
+        });
+
+        const data = await res.json();
+
+        if (res.status === 200) {
+            // Prepend locally so user sees instant update
+            const tempPosts = JSON.parse(localStorage.getItem("posts") || "[]");
+            tempPosts.unshift(data.post);
+            localStorage.setItem("posts", JSON.stringify(tempPosts));
+
+            renderLocalPosts();
+
+            textBox.value = "";
+            linkBox.value = "";
+            counter.textContent = "0 / 300";
+        } else {
+            alert("Error publishing post: " + data.message);
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Error publishing post");
     }
 
-    if (text.length > 300) {
-        alert("Post too long")
-        return
-    }
-
-    if (!canPost()) {
-
-        const lastPost = parseInt(localStorage.getItem("lastPostTime"))
-        const remaining = POST_COOLDOWN - (Date.now() - lastPost)
-
-        const minutes = Math.ceil(remaining / 60000)
-
-        alert("You can post again in " + minutes + " minutes")
-
-        return
-    }
-
-    publishBtn.disabled = true
-    publishBtn.innerHTML = `
-    <i class="ri-loader-4-line spin mr-1"></i>
-    Publishing...
-    `
-
-    await new Promise(resolve => setTimeout(resolve, 600))
-
-    const post = {
-        user: getUser(),
-        text: text,
-        link: sanitizeLink(linkBox.value.trim()),
-        time: Date.now()
-    }
-
-    let tempPosts = JSON.parse(localStorage.getItem("posts")) || []
-
-    tempPosts.unshift(post)
-
-    localStorage.setItem("posts", JSON.stringify(tempPosts))
-
-    textBox.value = ""
-    linkBox.value = ""
-
-    counter.textContent = "0 / 300"
-
-    publishBtn.disabled = false
-    publishBtn.innerHTML = `
-    <i class="ri-upload-cloud-line mr-1"></i>
-    Publish Progress
-    `
-
-    localStorage.setItem("lastPostTime", Date.now())
-
-    textBox.focus()
-    renderLocalPosts()
-
-}
+    publishBtn.disabled = false;
+    publishBtn.innerHTML = `<i class="ri-upload-cloud-line mr-1"></i> Publish Progress`;
+};
 
 textBox.addEventListener("input", function(){
 
@@ -345,9 +322,15 @@ function renderLocalPosts() {
 }
 
 window.addEventListener("load", () => {
+
     textBox.focus()
+
+    loadPosts()
+
+    renderLocalPosts()
+
 })
 
 setInterval(updateTimes, 60000)
 
-renderLocalPosts()
+loadPosts()
