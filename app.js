@@ -46,54 +46,36 @@ function escapeHTML(str) {
 }
 
 function loadPosts() {
-
-    fetch("posts.json?v=" + Date.now())
-        .then(res => res.json())
-        .then(data => {
-
-                feed.innerHTML = ""
-
-                data.reverse().forEach(post => {
-
-                            const div = document.createElement("div")
-
-                            div.className = "post"
-
-                            div.innerHTML = `
-                                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-
-                                    <div class="font-semibold text-gray-900">
-                                    ${post.user}
-                                    </div>
-
-                                    <p class="text-gray-700 mb-3 leading-relaxed">
-                                    ${escapeHTML(post.text)}
-                                    </p>
-
-                                    ${post.link ? `
-                                    <a href="${post.link}" target="_blank" class="text-blue-600 text-sm flex items-center gap-1 hover:underline">
-                                    <i class="ri-links-line"></i>
-                                    view project
-                                    </a>` : ""}
-
-                                    <div class="text-xs text-gray-400 mt-3 flex items-center gap-1">
-                                        <i class="ri-time-line text-gray-400 text-sm"></i>
-                                        <span class="post-time" data-time="${post.time}">
-                                        ${timeAgo(post.time)}
-                                        </span>
-                                    </div>
-
-                                    </div>
-                            `
-
-                feed.appendChild(div)
-
-            })
-
-        })
-
+  fetch("/.netlify/functions/getPosts")
+    .then(res => res.json())
+    .then(data => {
+      feed.innerHTML = "";
+      if(!data || data.length === 0) {
+        feed.innerHTML = `
+          <div class="bg-white p-5 rounded-xl shadow-sm animate-pulse h-24"></div>
+          <div class="bg-white p-5 rounded-xl shadow-sm animate-pulse h-24"></div>
+        `;
+        return;
+      }
+      data.forEach(post => {
+        const div = document.createElement("div");
+        div.className = "post";
+        div.innerHTML = `
+          <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+            <div class="font-semibold text-gray-900">${post.user}</div>
+            <p class="text-gray-700 mb-3 leading-relaxed">${escapeHTML(post.text)}</p>
+            ${post.link ? `<a href="${post.link}" target="_blank" class="text-blue-600 text-sm flex items-center gap-1 hover:underline"><i class="ri-links-line"></i> view project</a>` : ""}
+            <div class="text-xs text-gray-400 mt-3 flex items-center gap-1">
+              <i class="ri-time-line text-gray-400 text-sm"></i>
+              <span class="post-time" data-time="${post.time}">${timeAgo(post.time)}</span>
+            </div>
+          </div>
+        `;
+        feed.appendChild(div);
+      });
+    })
+    .catch(err => console.error(err));
 }
-
 
 const welcome = document.getElementById("welcome")
 const closeWelcome = document.getElementById("closeWelcome")
