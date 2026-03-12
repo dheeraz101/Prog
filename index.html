@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Prog</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body class="bg-gray-50 text-gray-800 antialiased">
+
+    <div class="max-w-2xl mx-auto px-4 py-10">
+
+        <h1 class="text-3xl font-semibold mb-6">Prog</h1>
+
+        <p class="text-gray-500 mb-8">
+            A public board where builders share daily progress.
+        </p>
+
+        <div class="bg-white rounded-xl shadow-sm p-5 mb-8">
+
+            <textarea id="text" placeholder="What progress did you make today?" class="w-full border rounded-lg p-3 mb-3 resize-none focus:outline-none focus:ring-2 focus:ring-black min-h-[120px]"></textarea>
+
+            <div class="flex justify-between text-xs text-gray-400 mb-3">
+                <span>Be concise.</span>
+                <span id="counter">0 / 300</span>
+            </div>
+            <input id="link" placeholder="Optional project link" class="w-full border rounded-lg p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-black" />
+
+            <button id="publish" class="bg-black text-white px-5 py-2 rounded-lg hover:opacity-80 transition">
+
+                <i class="ri-upload-cloud-line mr-1"></i>
+                Publish Progress
+
+            </button>
+
+            <button id="clearBtn" class="px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
+                Clear
+            </button>
+
+
+        </div>
+
+        <h2 class="text-xl font-semibold mb-4">Latest Progress</h2>
+
+        <div id="feed" class="space-y-4"></div>
+
+    </div>
+
+    <div id="welcome" class="fixed inset-0 bg-black/40 flex items-center justify-center hidden">
+
+        <div class="bg-white rounded-xl p-6 max-w-md text-center">
+
+            <h3 class="text-lg font-semibold mb-2">
+                Welcome to Prog
+            </h3>
+
+            <p class="text-gray-600 text-sm mb-4">
+                You publish your progress here for the world to see. Posts cannot be edited or deleted unless they violate site policy.
+            </p>
+
+            <button id="closeWelcome" class="bg-black text-white px-4 py-2 rounded-lg">
+            Got it
+            </button>
+
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+
+</body>
+
+</html>

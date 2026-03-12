@@ -1,0 +1,27 @@
+.spin {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+textarea {
+    resize: none;
+    overflow: hidden;
+    line-height: 1.5;
+}
+
+textarea:not(:focus) {
+    caret-color: transparent;
+}
+
+input:not(:focus) {
+    caret-color: transparent;
+}
