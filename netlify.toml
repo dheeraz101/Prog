@@ -2,5 +2,8 @@
   command = "mkdir -p public && cp index.html style.css app.js public/"
   publish = "public"
 
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "GITHUB_TOKEN,GITHUB_BRANCH,GITHUB_REPO,POSTS_FILE_PATH"
+
 [functions]
   directory = "netlify/functions"
